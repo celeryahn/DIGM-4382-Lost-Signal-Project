@@ -252,19 +252,53 @@ def talk_to_bartender():
 # ============================================================
 
 def basement_scene():
-    slow_print("\nYou descend the metal stairs into a dim, humming basement...")
-    slow_print("Pipes drip. Something moves in the darkness.\n")
+    slow_print("\nYou descend the narrow metal stairs, each step groaning under your weight.")
+    slow_print("The air grows colder. Dust hangs in the light of a single flickering bulb.\n")
 
-    slow_print("A figure steps forward — your face, your posture... but not your eyes.")
-    slow_print("Clone: \"...You're awake. That complicates everything.\"")
+    slow_print("Old crates line the walls, stamped with faded shipping labels from worlds you don’t recognize.")
+    slow_print("Tools sit untouched on workbenches, coated in a thin layer of gray.\n")
 
-    slow_print("\nHis tone is cold, analytical — yet something cracks beneath it.")
-    slow_print("Clone: \"I was told the original wouldn't survive the breach.\"")
-    slow_print("Clone: \"But here you are. Alive. And that means I have to finish this.\"")
+    slow_print("The basement hums quietly — machinery running somewhere deeper in the tavern.\n")
 
-    input("\nPress Enter as the clone steps closer...")
+    slow_print("To your right, a small wooden shelf leans against the wall, cluttered with forgotten belongings.")
+    slow_print("Most of it looks worthless… but one object immediately stands out.\n")
 
+    # ----- ITEM PICKUP ----- #
+    slow_print("A thin metallic card rests on the shelf, pulsing faintly with blue light.")
+    slow_print("As you pick it up, it vibrates — just once — then falls silent.\n")
+
+    add_to_inventory(
+        "strange access card",
+        "A metallic data card with a faint pulse. It reacts to your touch in a way you can't explain.",
+        "lore",
+        0
+    )
+
+    slow_print("You slip the card into your pocket.\n")
+    slow_print("That’s when you hear it.\n")
+
+    slow_print("*A soft scrape. Like metal against concrete.*\n")
+    slow_print("You freeze, listening.\n")
+
+    slow_print("A shadow detaches itself from behind a stack of crates.\n")
+    slow_print("Then it steps into the light.\n")
+
+    slow_print("Your own face stares back at you.\n")
+
+    
+    slow_print("Clone: \"Figures we'd cross paths eventually.\"")
+
+
+    slow_print("\nHis voice is cold, almost mechanical — but the sadness in it is unmistakable.")
+    slow_print("Clone: \"The breach should’ve erased you. That was the point.\"")
+    slow_print("Clone: \"No matter... I can't let you walk out of here with that...\"")
+
+    slow_print("\nHe steps closer, jaw tightening as if he's fighting some internal command.")
+    slow_print("Clone: \"I don't… want to do this. But I don’t have a choice.\"")
+
+    input("\nPress Enter as the clone lunges toward you...")
     combat_system()
+
 
 
 # ============================================================
