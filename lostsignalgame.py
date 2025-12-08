@@ -1,5 +1,7 @@
 import time
 import random
+import sys
+import select
 
 # ============================================================
 #                   UTILITY FUNCTIONS
@@ -12,7 +14,15 @@ def slow_print(text, delay=0.02):
         time.sleep(delay)
     print()
 
+def input_with_timeout(prompt, timeout=8):
+    slow_print(prompt)
+    sys.stdout.flush()
+    ready, _, _ = select.select([sys.stdin], [], [], timeout)
 
+    if ready:
+        return sys.stdin.readline().strip().lower()
+    else:
+        return None  # timed out
 # ============================================================
 #                   GLOBAL GAME STATE
 # ============================================================
@@ -20,6 +30,8 @@ def slow_print(text, delay=0.02):
 inventory = {}   # {item_name: {"desc": "...", "type": "weapon/lore/buff", "uses": int}}
 badge_buff = False
 basement_unlocked = False
+clone_defeated = False
+
 
 
 # ============================================================
@@ -343,26 +355,34 @@ def combat_system():
         slow_print("Clone: \"Don't trust the capsule... it's not what you think.\"")
         slow_print("The clone collapses.\n")
 
-    # --- Post-Fight Reflection ---
+        # --- Post-Fight Reflection ---
         slow_print("You stand over him, chest heaving. He looks so much like you that "
                    "your stomach twists.\n")
         slow_print("For a moment, you're not sure which one of you was meant to survive.")
         slow_print("Your hands tremble—not from fear, but from recognition.\n")
 
-        slow_print("If he was created to replace you... then what does that make you?")
-        slow_print("A prototype? A mistake? The real one?")
-        slow_print("None of it fits together.\n")
+        slow_print("\nHis voice distorts mid-sentence. A glitch runs down his neck.")
+        slow_print("You watch in horror as his skin flickers like a damaged hologram.\n")
 
-        slow_print("His final words echo in your skull:")
-        slow_print("\"The others will come.\"")
-        slow_print("\"Don't trust the capsule.\"")
+        slow_print("The human mask tears away — revealing metal beneath.")
+        slow_print("Synthetic tendons. Wires. A steel jaw shaped exactly like yours.")
+        slow_print("The clone wasn't human. It was wearing you.\n")
 
-        slow_print("\nYou wipe the blood from your face, steadying your breath.")
-        slow_print("Whoever sent them… they're still out there.")
-        slow_print("And they’re the ones who know who... or what you really are.\n")
+        slow_print("Panels split open across his chest, exposing a glowing pulse core.")
+        slow_print("It sputters… flickers… then fires off a sharp electronic burst.\n")
 
+        slow_print("ALERT PING: **TERMINATION SIGNAL SENT**")
+        slow_print("Someone — somewhere — now knows this clone has been destroyed.\n")
+
+        slow_print("You stumble back, trying to steady your breathing.")
+        slow_print("Who built these things? And why do they look like you?\n")
+
+        global clone_defeated
+        clone_defeated = True
 
         return_tavern()
+
+
 
 
 
@@ -416,6 +436,7 @@ def use_item_combat():
     return None
 
 
+
 # ============================================================
 #                   RETURN TO TAVERN
 # ============================================================
@@ -424,6 +445,195 @@ def return_tavern():
     input("Press Enter to return to the tavern...")
     tavern_loop()
 
+# ============================================================
+#                   RAID EVENT
+# ============================================================
+
+def raid_event():
+    slow_print("\nYou climb out of the basement, breathing hard, metal dust still clinging to your hands.")
+    slow_print("The tavern feels strangely normal. Music hums. Glasses clink. Conversations resume.")
+    slow_print("For a moment, it almost feels like nothing happened.\n")
+
+    slow_print("A group of off-duty corporate soldiers sit at a corner table, helmets off, half-drunk.")
+    slow_print("One of them laughs at a joke you’ll never hear.\n")
+
+    slow_print("Then—\n")
+
+    slow_print("**BZZT. BZZT.**")
+
+    slow_print("Their comm units crackle to life, all at once.")
+    slow_print("The soldiers freeze mid-sip.\n")
+
+    slow_print("\"—ALERT: TERMINATION SIGNAL RECEIVED.\"")
+    slow_print("\"—SOURCE IDENTIFIED WITHIN TAVERN PERIMETER.\"")
+    slow_print("\"—PROBABLE CARRIER PRESENT. SECURE IMMEDIATELY.\"\n")
+
+    slow_print("The soldiers exchange wide-eyed glances.")
+    slow_print("One of them whispers, \"No way… Here?\"")
+    slow_print("Another: \"If a construct was destroyed that close… the carrier must be nearby.\"\n")
+
+    slow_print("Their eyes begin to sweep the tavern… and slowly narrow toward you.")
+
+    slow_print("\nChaos erupts instantly.")
+    slow_print("The soldiers leap to their feet, drawing weapons. Patrons scream and overturn tables.")
+    slow_print("The alarms are blaring from the soldiers gear.\n")
+
+    slow_print("You don’t know what ‘carrier’ means. You don’t know why they’re here.")
+    slow_print("But you DO know one thing:\n")
+
+    slow_print("**They’re coming for you.**\n")
+
+    # --- First timed choice ---
+    choice1 = input_with_timeout(
+        "CHOICE (8s): Hide, Run, or Blend In? (hide/run/blend)\n"
+    )
+
+    if choice1 is None:
+        return got_caught("You freeze as a soldier points directly at you.")
+
+    if choice1 == "hide":
+        return raid_hide_route()
+    elif choice1 == "run":
+        return raid_run_route()
+    elif choice1 == "blend":
+        return raid_blend_route()
+    else:
+        return got_caught("You hesitate, and a soldier locks onto your position.")
+
+
+# ---------------------- ROUTE: HIDE ---------------------------
+
+def raid_hide_route():
+    slow_print("\nYou dive behind the bar counter as bullets crack overhead.")
+    slow_print("The bartender is already curled up under the shelf, trembling.\n")
+
+    slow_print("Soldier: \"Scan for heat signatures! The carrier is WOUNDED!\"\n")
+
+    choice = input_with_timeout(
+        "CHOICE (8s): Stay hidden or crawl to the storage room? (stay/crawl)\n"
+    )
+
+    if choice is None:
+        return got_caught("A thermal scanner sweeps the bar. You're found immediately.")
+
+    if choice == "stay":
+        return got_caught("A soldier vaults over the bar and spots you instantly.")
+    elif choice == "crawl":
+        slow_print("\nYou crawl through shattered bottles and spilled liquor.")
+        slow_print("A laser sweeps inches above your back as you slip into the storage room.\n")
+        return escape_vent()
+    else:
+        return got_caught("You hesitate and expose yourself to a patrol.")
+
+
+# ---------------------- ROUTE: RUN ---------------------------
+
+def raid_run_route():
+    slow_print("\nYou bolt across the tavern floor—")
+    slow_print("A spotlight immediately snaps to your position.\n")
+
+    slow_print("Soldier: \"TARGET IDENTIFIED! DO NOT LET THEM ESCAPE!\"\n")
+
+    choice = input_with_timeout(
+        "CHOICE (8s): Dive behind tables or sprint to the back exit? (dive/sprint)\n"
+    )
+
+    if choice is None:
+        return got_caught("You trip as gunfire erupts behind you.")
+
+    if choice == "dive":
+        slow_print("\nYou slide behind a row of overturned tables.")
+        slow_print("Gunfire rips into the wooden frames but misses you narrowly.\n")
+        return escape_kitchen()
+    elif choice == "sprint":
+        return got_caught("A stun round slams into your ribs mid-sprint.")
+    else:
+        return got_caught("You hesitate for half a second—too long.")
+
+
+# ---------------------- ROUTE: BLEND ---------------------------
+
+def raid_blend_route():
+    slow_print("\nYou shove yourself into a crowd of fleeing mercenaries.")
+    slow_print("Smoke fills the room as the sprinkler system activates.\n")
+
+    slow_print("Soldier: \"Filter the crowd! The anomaly's signal is degrading!\"\n")
+
+    choice = input_with_timeout(
+        "CHOICE (8s): Move with the crowd or break off toward the vents? (crowd/vents)\n"
+    )
+
+    if choice is None:
+        return got_caught("A soldier grabs your shoulder out of suspicion.")
+
+    if choice == "crowd":
+        return got_caught("A scanner picks up your heartbeat pattern. You're pulled from the crowd.")
+    elif choice == "vents":
+        slow_print("\nYou slip away as soldiers focus on the larger group.")
+        slow_print("A maintenance vent hangs open, steam billowing out.\n")
+        return escape_vent()
+    else:
+        return got_caught("Your hesitation draws attention.")
+
+
+# ---------------------- ESCAPE: VENTS ---------------------------
+
+def escape_vent():
+    slow_print("\nYou climb into the vent, pulling the grate shut behind you.")
+    slow_print("The metal tunnels vibrate as soldiers pound through the tavern.\n")
+
+    slow_print("A distorted voice echoes faintly through the ducts:")
+    slow_print("\"The carrier is close. Their signal is unstable. Move units downstairs.\"\n")
+
+    slow_print("You crawl toward a faint blue glow ahead...")
+    demo_end()
+
+
+# ---------------------- ESCAPE: KITCHEN ---------------------------
+
+def escape_kitchen():
+    slow_print("\nYou dart through the swinging kitchen doors.")
+    slow_print("Steam, broken dishes, and shouting cooks blur around you.\n")
+
+    slow_print("A back service hatch stands slightly ajar.\n")
+
+    choice = input_with_timeout(
+        "CHOICE (8s): Open the hatch quietly or kick it open? (quiet/kick)\n"
+    )
+
+    if choice is None:
+        return got_caught("A patrol enters the kitchen as you freeze in place.")
+
+    if choice == "quiet":
+        slow_print("\nYou slip through the hatch silently, disappearing into the alley beyond.\n")
+        demo_end()
+    elif choice == "kick":
+        return got_caught("The loud crash alerts the soldiers immediately.")
+    else:
+        return got_caught("That moment of uncertainty seals your fate.")
+
+
+# ---------------------- FAILURE STATE ---------------------------
+
+def got_caught(reason):
+    slow_print(f"\n{reason}")
+    slow_print("A stun baton cracks against your skull as everything goes dark...")
+    slow_print("\n*** DEMO OVER: YOU WERE CAPTURED ***\n")
+    main_menu()
+
+# ---------------------- DEMO END ---------------------------
+def demo_end():
+    slow_print("\nYou stumble into the cold neon-lit alley behind the tavern.")
+    slow_print("Sirens echo in the distance as corporate drones swarm overhead.\n")
+
+    slow_print("You clutch your chest, catching your breath.")
+    slow_print("Whatever that clone was… whatever the capsule is…")
+    slow_print("One thing is certain now:\n")
+
+    slow_print("**Someone built those constructs. And they’re still looking for you.**\n")
+
+    slow_print("*** DEMO COMPLETE — THANK YOU FOR PLAYING ***\n")
+    main_menu()
 
 # ============================================================
 #                   MERC DIALOGUE
@@ -442,6 +652,12 @@ def talk_to_merc():
 
 def tavern_loop():
     global basement_unlocked
+    global clone_defeated
+
+    if clone_defeated:
+        raid_event()
+        clone_defeated = False
+        return
 
     while True:
         slow_print("\n===== CENTRAL DRIFT TAVERN =====")
