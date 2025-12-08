@@ -676,7 +676,7 @@ def got_caught(reason):
 
 # ---------------------- DEMO END ---------------------------
 def demo_end():
-    slow_print("\nYou stumble into the cold neon-lit alley behind the tavern.")
+    slow_print("\nYou stumble into the narrow service passage behind the tavern, lit by flickering holo-signs.")
     slow_print("Sirens echo in the distance as corporate drones swarm overhead.\n")
 
     slow_print("You clutch your chest, catching your breath.")
