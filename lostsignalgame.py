@@ -273,6 +273,8 @@ def combat_system():
 
     while player_hp > 0 and clone_hp > 0:
 
+        defend = False
+
         # --- Show HP ---
         slow_print(f"Your HP: {player_hp}   |   Clone HP: {clone_hp}")
 
@@ -335,8 +337,15 @@ def combat_system():
             stun_next_turn = False
         else:
             dmg = random.randint(3, 5)
-            slow_print(f"\nClone attacks! ({dmg} dmg)")
-            player_hp -= dmg
+
+            if defend:
+                reduced = max(1, dmg // 2)
+                slow_print(f"\nClone attacks, but you brace! Damage reduced from {dmg} to {reduced}.")
+                player_hp -= reduced
+            else:
+                slow_print(f"\nClone attacks! ({dmg} dmg)")
+                player_hp -= dmg
+
 
     # ============================================================
     #                   COMBAT RESULT
