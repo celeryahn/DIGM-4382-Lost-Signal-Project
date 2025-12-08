@@ -203,9 +203,10 @@ def talk_to_bartender():
     player_answers = []
 
     questions = [
-        "Bartender: \"You new 'round here? (yes/no)\" ",
-        "Bartender: \"You runnin' from someone? (yes/no)\" ",
-        "Bartender: \"Wanna hear today's special? (yes/no)\" "
+        "Bartender: \"First time in the Drift? (yes/no)\"",
+        "Bartender: \"You get your bearings yet? Know your way around? (yes/no)\"",
+        "Bartender: \"You lookin’ for something? Or someone? (yes/no)\""
+
     ]
 
     for q in questions:
@@ -215,22 +216,35 @@ def talk_to_bartender():
         player_answers.append(ans)
 
     if player_answers == correct_sequence:
-        slow_print("\nBartender freezes mid-polish.\n")
-        slow_print("Bartender: \"...Thought so. People like you don't wander without purpose.\"")
-        slow_print("Bartender: \"If you're lookin' for answers... there's a door downstairs.\"")
-        slow_print("Bartender: \"Wasn't me who told you. Understand?\"")
+
+        slow_print("\nThe bartender studies you for a moment, his expression softening.\n")
+        slow_print("Bartender: \"Yeah... figures. Folks who wander in lookin’ like you—")
+        slow_print("—new place, no bearings, chasin’ something they can’t quite name.\"")
+
+        slow_print("\nHe reaches under the counter, rummaging through an old crate.")
+        slow_print("Bartender: \"See all kinds come through the Drift. ")
+        slow_print("People runnin’, people searchin’, people forgettin’.\"")
+
+        slow_print("\nHe pulls out nothing, but his hand pauses like he remembers something.")
+        slow_print("Bartender: \"Got somethin' downstairs you might wanna check out.\"")
+        slow_print("Bartender: \"Some traveler left it behind awhile back. Said it belonged to")
+        slow_print("someone who might come lookin’. Never knew what they meant.\"")
+
+        slow_print("\nHe jerks his chin toward the hallway.")
+        slow_print("Bartender: \"Basement door’s unlocked. Shelf on the right. ")
+        slow_print("Take a look. Might help you find whatever it is you’re after.\"")
 
         basement_unlocked = True
 
-        choice = input("\nEnter the basement now? (yes/no): ").strip().lower()
+        choice = input("\nGo to the basement now? (yes/no): ").strip().lower()
         if choice == "yes":
             basement_scene()
-
     else:
-        slow_print("\nBartender squints at you.")
-        slow_print("Bartender: \"Mm. Try again when you ain't actin' suspicious.\"")
-        slow_print("He turns away.")
+        slow_print("\nThe bartender shrugs, losing interest.")
+        slow_print("Bartender: 'Alright then. Forget I asked.'")
         return
+
+
 
 
 # ============================================================
@@ -365,11 +379,7 @@ def combat_system():
         slow_print("The clone collapses.\n")
 
         # --- Post-Fight Reflection ---
-        slow_print("You stand over him, chest heaving. He looks so much like you that "
-                   "your stomach twists.\n")
-        slow_print("For a moment, you're not sure which one of you was meant to survive.")
-        slow_print("Your hands tremble—not from fear, but from recognition.\n")
-
+    
         slow_print("\nHis voice distorts mid-sentence. A glitch runs down his neck.")
         slow_print("You watch in horror as his skin flickers like a damaged hologram.\n")
 
